@@ -35,6 +35,7 @@
       </div>
       <div class="flex items-start gap-2 mb-3">
         <p id="qText" class="text-lg font-semibold flex-1"></p>
+        <span id="qCat" class="badge shrink-0"></span>
         <button id="infoBtn" class="icon-btn shrink-0" title="Meer uitleg"><i data-feather="info"></i><span class="hidden sm:inline">Info</span></button>
       </div>
       <input id="qSlider" type="range" min="1" max="5" value="3" class="slider mb-3">
@@ -54,9 +55,17 @@
         <p class="mb-1 flex justify-between"><span>Economisch (Links ↔ Rechts)</span><span id="economicScore">0%</span></p>
         <div class="w-full h-2 bg-white/10 rounded"><div id="economicBar" class="h-2 bg-red-500 rounded" style="width:50%"></div></div>
       </div>
-      <div>
-        <p class="mb-1 flex justify-between"><span>Sociaal (Progressief ↔ Conservatief)</span><span id="socialScore">0%</span></p>
+      <div class="mb-4">
+        <p class="mb-1 flex justify-between"><span>Sociaal + Vrijheid (Progressief ↔ Conservatief)</span><span id="socialScore">0%</span></p>
         <div class="w-full h-2 bg-white/10 rounded"><div id="socialBar" class="h-2 bg-green-500 rounded" style="width:50%"></div></div>
+      </div>
+      <div class="mb-4">
+        <p class="mb-1 flex justify-between"><span>Vrijheid (Libertair ↔ Autoriteit)</span><span id="freedomScore">0%</span></p>
+        <div class="w-full h-2 bg-white/10 rounded"><div id="freedomBar" class="h-2 bg-blue-500 rounded" style="width:50%"></div></div>
+      </div>
+      <div>
+        <p class="mb-1 flex justify-between"><span>Internationaal (Globalistisch ↔ Nationalistisch)</span><span id="intlScore">0%</span></p>
+        <div class="w-full h-2 bg-white/10 rounded"><div id="intlBar" class="h-2 bg-purple-500 rounded" style="width:50%"></div></div>
       </div>
       <div id="quadText" class="mt-4 text-sm"></div>
     </div>
@@ -107,32 +116,53 @@
 
     // 24 vragen met info in simpele taal
     const questions = [
-      // ECONOMIE (12)
-      { text:"Hoge inkomens mogen meer belasting betalen om verschil te verkleinen.", axis:"economic", polarity:-1, info:{ uitleg:"Gaat over extra belasting voor rijken om ongelijkheid te verminderen.", voor:["Minder ongelijkheid","Meer geld voor zorg en onderwijs"], tegen:["Rijken kunnen verhuizen of minder investeren","Kan banen kosten"] } },
-      { text:"Concurrentie en uitbesteden maken diensten vaak beter.", axis:"economic", polarity:+1, info:{ uitleg:"Bedrijven leveren diensten i.p.v. overheid.", voor:["Efficiënter en goedkoper","Meer keuze"], tegen:["Winst kan belangrijker zijn dan kwaliteit","Kan ongelijkheid vergroten"] } },
-      { text:"Een basisinkomen helpt als vangnet.", axis:"economic", polarity:-1, info:{ uitleg:"Iedereen krijgt elke maand een vast bedrag.", voor:["Zekerheid voor iedereen","Minder armoede"], tegen:["Kost veel geld","Kan werk minder aantrekkelijk maken"] } },
-      { text:"Salarissen moeten vooral door de markt ontstaan.", axis:"economic", polarity:+1, info:{ uitleg:"Minder overheidsregels over loonhoogte.", voor:["Bedrijven concurreren beter","Efficiënt"], tegen:["Kans op te lage lonen","Meer ongelijkheid"] } },
-      { text:"Belangrijke sectoren zoals energie of spoor moeten publiek blijven.", axis:"economic", polarity:-1, info:{ uitleg:"Staat houdt controle over basisvoorzieningen.", voor:["Iedereen toegang","Betrouwbaarder"], tegen:["Kan duur en traag zijn","Minder innovatie"] } },
-      { text:"Lagere lasten voor bedrijven zorgen voor groei.", axis:"economic", polarity:+1, info:{ uitleg:"Minder belasting en regels voor bedrijven.", voor:["Meer banen","Meer investeringen"], tegen:["Minder geld voor publieke diensten","Grote bedrijven profiteren vooral"] } },
-      { text:"Sterke werknemersrechten zijn nodig voor een gezonde economie.", axis:"economic", polarity:-1, info:{ uitleg:"Bescherming via wet en vakbond.", voor:["Beter loon en veiligheid","Meer zekerheid"], tegen:["Minder flexibiliteit voor bedrijven","Kan groei remmen"] } },
-      { text:"Vrije handel is meestal beter dan bescherming van de eigen markt.", axis:"economic", polarity:+1, info:{ uitleg:"Grenzen open voor import/export, weinig beperkingen.", voor:["Goedkopere producten","Meer keuze"], tegen:["Banen kunnen verdwijnen","Afhankelijk van buitenland"] } },
-      { text:"Zorg en onderwijs moeten vooral publiek en betaalbaar blijven.", axis:"economic", polarity:-1, info:{ uitleg:"Overheid betaalt een groot deel van zorg en scholen.", voor:["Iedereen kan meedoen","Meer gelijkheid"], tegen:["Hoge kosten voor overheid","Minder concurrentie en innovatie"] } },
-      { text:"Mensen zijn zelf verantwoordelijk voor hun pensioen.", axis:"economic", polarity:+1, info:{ uitleg:"Zelf sparen, minder via de staat.", voor:["Eigen keuzevrijheid","Minder druk op overheid"], tegen:["Niet iedereen spaart genoeg","Risico op armoede later"] } },
-      { text:"Grote bedrijven mogen zwaarder worden belast dan MKB.", axis:"economic", polarity:-1, info:{ uitleg:"Grotere bedrijven betalen relatief meer.", voor:["Eerlijkere verdeling","Meer inkomsten voor overheid"], tegen:["Bedrijven kunnen vertrekken","Minder investeringen"] } },
-      { text:"Minder regels en lasten voor ondernemers levert meer op.", axis:"economic", polarity:+1, info:{ uitleg:"Minder papierwerk en belasting.", voor:["Meer groei en innovatie","Snellere processen"], tegen:["Risico op misbruik","Minder bescherming voor werknemers/milieu"] } },
-      // SOCIAAL (12)
-      { text:"Softdrugs en kleine hoeveelheden moeten niet strafbaar zijn.", axis:"social", polarity:-1, info:{ uitleg:"Gebruik/bezit kleine hoeveelheden toestaan.", voor:["Minder criminaliteit","Betere controle en veiligheid"], tegen:["Kan meer gebruik uitlokken","Gezondheidsrisico's"] } },
-      { text:"Immigratie mag strenger worden beperkt.", axis:"social", polarity:+1, info:{ uitleg:"Minder mensen mogen naar Nederland komen.", voor:["Minder druk op woningen/voorzieningen","Meer controle"], tegen:["Tekort aan personeel","Minder diversiteit"] } },
-      { text:"Abortus moet legaal en goed toegankelijk zijn.", axis:"social", polarity:-1, info:{ uitleg:"Vrouwen beslissen zelf over afbreken zwangerschap.", voor:["Vrijheid en veiligheid","Beter geregeld"], tegen:["Ethische bezwaren","Morele discussie"] } },
-      { text:"Zwaardere straffen en meer camera's helpen tegen criminaliteit.", axis:"social", polarity:+1, info:{ uitleg:"Strenger optreden en meer toezicht.", voor:["Meer veiligheid","Schrikt af"], tegen:["Privacyproblemen","Pakt oorzaken niet aan"] } },
-      { text:"LHBTQ+-rechten moeten actief beschermd worden.", axis:"social", polarity:-1, info:{ uitleg:"Overheid zorgt voor gelijke rechten en aanpak discriminatie.", voor:["Iedereen voelt zich veilig","Minder discriminatie"], tegen:["Overheid bemoeit zich veel","Kan botsen met tradities"] } },
-      { text:"Tradities en nationale cultuur mogen beter bewaakt worden.", axis:"social", polarity:+1, info:{ uitleg:"Meer aandacht voor behoud van oude gewoontes.", voor:["Samenhang en identiteit","Bescherming erfgoed"], tegen:["Kan vooruitgang remmen","Kan minderheden buitensluiten"] } },
-      { text:"Kerk en staat moeten strikt gescheiden blijven.", axis:"social", polarity:-1, info:{ uitleg:"Geloof en politiek houden afstand.", voor:["Gelijkheid voor iedereen","Politiek blijft neutraal"], tegen:["Gelovigen voelen zich minder gehoord","Minder religieuze tradities in beleid"] } },
-      { text:"Extra surveillance door de overheid is goed tegen terrorisme.", axis:"social", polarity:+1, info:{ uitleg:"Meer toezicht/afluisteren om aanslagen te voorkomen.", voor:["Meer veiligheid","Sneller ingrijpen"], tegen:["Minder privacy","Kans op misbruik"] } },
-      { text:"Vrije meningsuiting moet ruim zijn, ook als het schuurt.", axis:"social", polarity:-1, info:{ uitleg:"Mensen mogen (bijna) alles zeggen.", voor:["Sterke democratie","Eerlijke discussies"], tegen:["Kan kwetsend zijn","Meer spanningen"] } },
-      { text:"Bij onrust gaan veiligheid en orde voor op individuele vrijheid.", axis:"social", polarity:+1, info:{ uitleg:"Overheid mag hard ingrijpen voor rust en veiligheid.", voor:["Sneller stabiliteit","Bescherming burgers"], tegen:["Vrijheden worden ingeperkt","Risico op machtsmisbruik"] } },
-      { text:"Diversiteit maakt de samenleving sterker.", axis:"social", polarity:-1, info:{ uitleg:"Verschillende achtergronden zijn positief.", voor:["Nieuwe ideeën/innovatie","Meer begrip"], tegen:["Kan spanningen geven","Integratie kost moeite"] } },
-      { text:"Integratie en burgerschap mogen strenger worden afgedwongen.", axis:"social", polarity:+1, info:{ uitleg:"Nieuwkomers passen zich duidelijker aan regels/gewoontes aan.", voor:["Meer samenhang","Minder misverstanden"], tegen:["Kan streng/oneerlijk voelen","Minder ruimte voor verschillen"] } }
+      // 1) ECONOMIE — links ↔ rechts (10)
+      {cat:'Economie', text:"Belastingen voor hoge inkomens moeten flink omhoog.", axis:'economic', polarity:-1, info:{uitleg:'Hogere belasting voor hoge inkomens om ongelijkheid te verkleinen.', voor:['Minder ongelijkheid','Meer geld voor publieke diensten'], tegen:['Kan investeringen remmen','Rijken kunnen vertrekken']}},
+      {cat:'Economie', text:"De overheid moet bedrijven die winst maken zwaar belasten.", axis:'economic', polarity:-1, info:{uitleg:'Hogere winstbelasting voor bedrijven.', voor:['Meer inkomsten voor overheid','Eerlijkere bijdrage'], tegen:['Minder investeringen','Bedrijven kunnen uitwijken']}},
+      {cat:'Economie', text:"De overheid moet basisvoorzieningen (zorg, energie, OV) in eigen beheer hebben.", axis:'economic', polarity:-1, info:{uitleg:'Publiek eigendom i.p.v. private bedrijven.', voor:['Toegankelijk en betaalbaar','Meer controle'], tegen:['Minder efficiënt/innovatie','Hoge kosten']}},
+      {cat:'Economie', text:"Werknemers hebben recht op een minimumloon dat verder stijgt met de inflatie.", axis:'economic', polarity:-1, info:{uitleg:'Minimumloon automatisch meestijgen.', voor:['Koopkracht blijft op peil','Minder armoede'], tegen:['Hogere loonkosten','Kan banen kosten']}},
+      {cat:'Economie', text:"Flexibele arbeid (zzp, tijdelijke contracten) moet sterker gereguleerd worden.", axis:'economic', polarity:-1, info:{uitleg:'Meer regels voor flexwerk en schijnzelfstandigheid.', voor:['Bescherming voor werkenden','Minder race to the bottom'], tegen:['Minder flexibiliteit','Minder ondernemerschap']}},
+      {cat:'Economie', text:"Concurrentie stimuleert innovatie en welvaart.", axis:'economic', polarity:+1, info:{uitleg:'Meer marktwerking, minder monopolie.', voor:['Lagere prijzen','Meer keuze en innovatie'], tegen:['Kans op kwaliteitsverschil','Minder waarborg publieke waarden']}},
+      {cat:'Economie', text:"Overheidsuitgaven moeten vooral gericht zijn op infrastructuur en defensie, niet op sociale zekerheid.", axis:'economic', polarity:+1, info:{uitleg:'Prioriteit bij bouwen en veiligheid.', voor:['Langetermijngroei','Nationale veiligheid'], tegen:['Minder steun voor kwetsbaren','Grotere ongelijkheid']}},
+      {cat:'Economie', text:"Een vlak belastingtarief (iedereen hetzelfde percentage) is eerlijker dan progressieve belasting.", axis:'economic', polarity:+1, info:{uitleg:'Flat tax i.p.v. hogere schijven.', voor:['Eenvoudig en transparant','Minder ontwijking'], tegen:['Minder herverdeling','Drukt harder op lage inkomens']}},
+      {cat:'Economie', text:"Vakbonden hebben te veel macht in Nederland.", axis:'economic', polarity:+1, info:{uitleg:'Minder invloed van vakbonden.', voor:['Meer flexibiliteit voor bedrijven','Snellere aanpassing'], tegen:['Zwakkere positie werknemers','Lagere lonen mogelijk']}},
+      {cat:'Economie', text:"De overheid moet zich zo min mogelijk bemoeien met de economie.", axis:'economic', polarity:+1, info:{uitleg:'Kleine overheid, lage lasten.', voor:['Meer ondernemerschap','Minder bureaucratie'], tegen:['Minder bescherming','Grotere kans op misbruik']}},
+
+      // 2) SOCIAAL — progressief ↔ conservatief (10)
+      {cat:'Sociaal', text:"Het homohuwelijk moet volledig gelijkwaardig zijn aan het heterohuwelijk.", axis:'social', polarity:-1, info:{uitleg:'Exact dezelfde rechten voor LHBTQ+-paren.', voor:['Gelijke behandeling','Minder discriminatie'], tegen:['Botst met traditionele opvattingen','Religieuze bezwaren']}},
+      {cat:'Sociaal', text:"Drugsgebruik moet grotendeels legaal zijn.", axis:'social', polarity:-1, info:{uitleg:'Gebruik en bezit toelaten/regelen.', voor:['Minder criminaliteit','Betere controle/kwaliteit'], tegen:['Kan gebruik verhogen','Gezondheidsrisico’s']}},
+      {cat:'Sociaal', text:"Abortus moet altijd toegestaan blijven.", axis:'social', polarity:-1, info:{uitleg:'Zelfbeschikking over zwangerschap.', voor:['Vrijheid en veiligheid','Voorkomt illegale praktijken'], tegen:['Ethische bezwaren','Morele discussie']}},
+      {cat:'Sociaal', text:"Traditionele gezinswaarden zijn de hoeksteen van de samenleving.", axis:'social', polarity:+1, info:{uitleg:'Meer nadruk op gezin, traditie, rolpatronen.', voor:['Stabiliteit en samenhang','Duidelijke normen'], tegen:['Minder ruimte voor diversiteit','Kan verouderde rollen versterken']}},
+      {cat:'Sociaal', text:"Kunst en cultuur verdienen meer subsidie.", axis:'social', polarity:-1, info:{uitleg:'Meer overheidsgeld voor cultuursector.', voor:['Behoud en vernieuwing cultuur','Toegankelijk voor iedereen'], tegen:['Kost veel geld','Markt kan ook financieren']}},
+      {cat:'Sociaal', text:"Strenge straffen zijn effectiever dan heropvoeding bij criminelen.", axis:'social', polarity:+1, info:{uitleg:'Zwaarder straffen i.p.v. herstel.', voor:['Afschrikking','Rechtvaardigheidsgevoel'], tegen:['Weinig effect op oorzaken','Meer recidive mogelijk']}},
+      {cat:'Sociaal', text:"De overheid moet religieuze scholen subsidiëren.", axis:'social', polarity:+1, info:{uitleg:'Publiek geld voor scholen op religieuze grondslag.', voor:['Vrijheid van onderwijs','Aansluiting bij ouders'], tegen:['Scheiding kerk–staat onder druk','Kan segregatie vergroten']}},
+      {cat:'Sociaal', text:"Migranten moeten zich zoveel mogelijk aanpassen aan de Nederlandse cultuur.", axis:'social', polarity:+1, info:{uitleg:'Sterke nadruk op assimilatie.', voor:['Eenduidige regels en taal','Minder misverstanden'], tegen:['Weinig ruimte voor eigen cultuur','Kan streng/uitsluitend voelen']}},
+      {cat:'Sociaal', text:"Vrijheid van meningsuiting mag niet beperkt worden, ook niet als uitspraken kwetsend zijn.", axis:'social', polarity:-1, info:{uitleg:'Ruime vrije meningsuiting.', voor:['Sterke democratie','Open debat'], tegen:['Kan kwetsend of polariserend zijn','Risico op haatdragende taal']}},
+      {cat:'Sociaal', text:"Nederland moet meer doen om gendergelijkheid te bevorderen.", axis:'social', polarity:-1, info:{uitleg:'Actief beleid voor gelijke kansen.', voor:['Meer gelijkheid','Beter benutten talent'], tegen:['Extra regels en kosten','Niet altijd nodig volgens sommigen']}},
+
+      // 3) VRIJHEID — autoriteit ↔ libertair (10)
+      {cat:'Vrijheid', text:"De overheid mag verregaande digitale surveillance inzetten om terrorisme te bestrijden.", axis:'freedom', polarity:+1, info:{uitleg:'Meer data/monitoring door overheid.', voor:['Meer veiligheid','Sneller opsporen'], tegen:['Minder privacy','Kans op misbruik']}},
+      {cat:'Vrijheid', text:"Mensen hebben het recht om hun eigen lichaam te gebruiken zoals ze willen (bijvoorbeeld drugs of euthanasie).", axis:'freedom', polarity:-1, info:{uitleg:'Grote persoonlijke autonomie.', voor:['Vrijheid en waardigheid','Minder betutteling'], tegen:['Moeilijke ethische grenzen','Maatschappelijke risico’s']}},
+      {cat:'Vrijheid', text:"Wapenbezit door burgers moet legaal zijn.", axis:'freedom', polarity:-1, info:{uitleg:'Burgers mogen vuurwapens bezitten.', voor:['Zelfverdediging','Macht niet alleen bij staat'], tegen:['Meer geweldsrisico','Moeilijk te controleren']}},
+      {cat:'Vrijheid', text:"Burgers moeten zelf mogen kiezen of ze een zorgverzekering afsluiten.", axis:'freedom', polarity:-1, info:{uitleg:'Geen verplichte basisverzekering.', voor:['Meer keuzevrijheid','Lagere lasten voor sommigen'], tegen:['Risico dat mensen onverzekerd zijn','Zorg wordt duurder voor zieken']}},
+      {cat:'Vrijheid', text:"Er moeten bindende referenda komen voor belangrijke beslissingen.", axis:'freedom', polarity:-1, info:{uitleg:'Directe democratie met bindend effect.', voor:['Meer invloed burgers','Draagvlak voor beleid'], tegen:['Complexe onderwerpen versimpeld','Kans op populisme']}},
+      {cat:'Vrijheid', text:"De overheid mag zich niet bemoeien met het privéleven van burgers, zolang er geen schade wordt veroorzaakt.", axis:'freedom', polarity:-1, info:{uitleg:'Staat blijft op afstand in privésfeer.', voor:['Grote persoonlijke vrijheid','Minder betutteling'], tegen:['Moeilijk te bepalen wat “schade” is','Kan handhaving bemoeilijken']}},
+      {cat:'Vrijheid', text:"Bedrijven moeten vrij zijn om zelf te bepalen wie ze aannemen, ook al leidt dit tot discriminatie.", axis:'freedom', polarity:-1, info:{uitleg:'Weinig regels op aannamebeleid.', voor:['Volledige ondernemingsvrijheid','Minder overheid'], tegen:['Discriminatie neemt toe','Oneerlijke kansen']}},
+      {cat:'Vrijheid', text:"Een sterke politie en justitie zijn essentieel voor een vrije samenleving.", axis:'freedom', polarity:+1, info:{uitleg:'Meer capaciteit/middelen voor veiligheid.', voor:['Bescherming rechten','Veiligheid eerst'], tegen:['Kan leiden tot hard beleid','Vrijheden kunnen onder druk staan']}},
+      {cat:'Vrijheid', text:"Overheidsinformatie moet volledig openbaar zijn, tenzij er direct gevaar dreigt.", axis:'freedom', polarity:-1, info:{uitleg:'Open overheid als norm.', voor:['Transparantie en controle','Minder corruptie'], tegen:['Gevoelige info kan uitlekken','Beperkt onderhandelingsruimte overheid']}},
+      {cat:'Vrijheid', text:"Het is beter om tien schuldigen vrij te laten lopen dan één onschuldige onterecht te straffen.", axis:'freedom', polarity:-1, info:{uitleg:'Voorzichtigheid in strafrecht.', voor:['Beschermt onschuldigen','Rechtsstaat boven snelheid'], tegen:['Gevaar dat schuldigen vrijkomen','Onveiligheidsgevoel']}},
+
+      // 4) INTERNATIONAAL — nationalist ↔ globalist (10)
+      {cat:'Internationaal', text:"Nederland moet uit de Europese Unie stappen.", axis:'international', polarity:+1, info:{uitleg:'Nexit: buiten de EU gaan.', voor:['Meer eigen regels','Geen EU-bijdrage'], tegen:['Minder handel/invloed','Economische onzekerheid']}},
+      {cat:'Internationaal', text:"Vrijhandel is goed voor iedereen, ook als sommige banen verdwijnen.", axis:'international', polarity:-1, info:{uitleg:'Meer handel, minder barrières.', voor:['Goedkopere producten','Meer wereldwijde groei'], tegen:['Banenverlies in sectoren','Afhankelijk van import']}},
+      {cat:'Internationaal', text:"Nederland moet zijn grenzen sluiten voor asielzoekers.", axis:'international', polarity:+1, info:{uitleg:'Geen/veel minder asielinstroom.', voor:['Minder druk op opvang/wonen','Meer controle'], tegen:['Schendt vluchtelingenrechten','Negatieve internationale gevolgen']}},
+      {cat:'Internationaal', text:"Ontwikkelingshulp is weggegooid geld.", axis:'international', polarity:+1, info:{uitleg:'Hulp werkt niet/doelt niet goed.', voor:['Bespaart geld','Stimuleert zelfredzaamheid'], tegen:['Mensen in nood krijgen geen steun','Stabiliteit en handel lijden eronder']}},
+      {cat:'Internationaal', text:"Klimaatmaatregelen moeten wereldwijd gecoördineerd worden.", axis:'international', polarity:-1, info:{uitleg:'Internationale afspraken over klimaat.', voor:['Effectiever wereldwijd','Gelijke spelregels'], tegen:['Moeilijk te handhaven','Kost soevereiniteit/tempo']}},
+      {cat:'Internationaal', text:"Nederland moet zijn defensie-uitgaven fors verhogen.", axis:'international', polarity:+1, info:{uitleg:'Veel meer geld naar defensie.', voor:['Betere veiligheid/afschrikking','NAVO-normen halen'], tegen:['Geld gaat niet naar andere zaken','Kan spanningen vergroten']}},
+      {cat:'Internationaal', text:"Multinationale bedrijven hebben te veel macht op wereldniveau.", axis:'international', polarity:-1, info:{uitleg:'Grote bedrijven beperken met regels.', voor:['Meer eerlijke concurrentie','Minder belastingontwijking'], tegen:['Meer regels/kosten','Minder investeringen']}},
+      {cat:'Internationaal', text:"Nederland moet actief vluchtelingen opnemen uit conflictgebieden.", axis:'international', polarity:-1, info:{uitleg:'Menswaardige opvang en hervestiging.', voor:['Humanitair juist','Internationale solidariteit'], tegen:['Druk op woningmarkt/voorzieningen','Integratie kost tijd en geld']}},
+      {cat:'Internationaal', text:"Internationale verdragen beperken de Nederlandse soevereiniteit te veel.", axis:'international', polarity:+1, info:{uitleg:'Minder gebonden zijn aan verdragen.', voor:['Meer eigen koers','Sneller beleid'], tegen:['Minder samenwerking','Minder invloed in de wereld']}},
+      {cat:'Internationaal', text:"De Europese Unie moet meer samenwerken op defensie en buitenlandse politiek.", axis:'international', polarity:-1, info:{uitleg:'EU verder integreren op veiligheid/diplomatie.', voor:['Sterkere positie EU','Efficiënter optreden'], tegen:['Minder nationale zeggenschap','Complexere besluitvorming']}}
     ];
 
     let current=0; let answers=Array(questions.length).fill(3);
@@ -142,6 +172,7 @@
     const progress=document.getElementById('progress');
     const prevBtn=document.getElementById('prevBtn');
     const nextBtn=document.getElementById('nextBtn');
+    const qCat=document.getElementById('qCat');
 
     const infoBtn=document.getElementById('infoBtn');
     const infoModal=document.getElementById('infoModal');
@@ -168,7 +199,14 @@
     function showQuestion(){
       const q=questions[current];
       qText.textContent=q.text;
+      qCat.textContent=q.cat || '';
       qCounter.textContent=`Vraag ${current+1}/${questions.length}`;
+      qSlider.value=answers[current];
+      const pct=Math.round((current)/(questions.length)*100);
+      progress.style.width=`${pct}%`;
+      prevBtn.disabled=current===0;
+      nextBtn.textContent=current===questions.length-1?"Resultaat":"Volgende";
+    }/${questions.length}`;
       qSlider.value=answers[current];
       progress.style.width=`${((current)/questions.length)*100}%`;
       prevBtn.disabled=current===0;
@@ -182,8 +220,26 @@
     document.getElementById('resetBtn').addEventListener('click',()=>{current=0;answers=Array(questions.length).fill(3);document.getElementById('results').classList.add('hidden');document.getElementById('quiz').classList.remove('hidden');showQuestion();});
 
     function calc(){
-      let econ=0,soc=0;
-      questions.forEach((q,i)=>{const val=answers[i]-3;const sc=val*q.polarity;if(q.axis==='economic')econ+=sc;else soc+=sc;});
+      let econ=0, soc=0, free=0, intl=0;
+      let econCnt=0, socCnt=0, freeCnt=0, intlCnt=0;
+      questions.forEach((q,i)=>{
+        const val = (answers[i]-3); // -2..+2
+        const sc = val * q.polarity; // direction
+        if(q.axis==='economic'){ econ+=sc; econCnt++; }
+        else if(q.axis==='social'){ soc+=sc; socCnt++; }
+        else if(q.axis==='freedom'){ free+=sc; freeCnt++; }
+        else if(q.axis==='international'){ intl+=sc; intlCnt++; }
+      });
+      // Normalize 0..100
+      const toPct=(sum, n)=>{ const max=n*2; return Math.round(((sum + max) / (2*max)) * 100); };
+      const econScore = toPct(econ, econCnt);
+      const freedomScore = toPct(free, freeCnt); // 0=libertair, 100=autoriteit
+      const intlScore = toPct(intl, intlCnt);    // 0=globalist, 100=nationalist
+      // Y-axis: combine Sociaal (+ conservatief) with Vrijheid (autoriteit=conservatief, libertair=progressief)
+      const socialCombinedSum = soc + free; // same orientation toward conservatief
+      const socialScore = toPct(socialCombinedSum, socCnt + freeCnt);
+      showResults(econScore, socialScore, freedomScore, intlScore);
+    });
       const econMax=questions.filter(q=>q.axis==='economic').length*2;
       const socMax=questions.filter(q=>q.axis==='social').length*2;
       const econScore=Math.round(((econ+econMax)/(2*econMax))*100);
@@ -191,18 +247,34 @@
       showResults(econScore,socScore);
     }
 
-    function showResults(economicScore,socialScore){
+    function showResults(economicScore, socialScore, freedomScore, intlScore){
       document.getElementById('quiz').classList.add('hidden');
       document.getElementById('results').classList.remove('hidden');
       document.getElementById('economicScore').textContent=economicScore+"%";
       document.getElementById('socialScore').textContent=socialScore+"%";
+      document.getElementById('freedomScore').textContent=freedomScore+"%";
+      document.getElementById('intlScore').textContent=intlScore+"%";
       document.getElementById('economicBar').style.width=economicScore+"%";
       document.getElementById('socialBar').style.width=socialScore+"%";
+      document.getElementById('freedomBar').style.width=freedomScore+"%";
+      document.getElementById('intlBar').style.width=intlScore+"%";
       const dot=document.getElementById('dot'); dot.style.left=economicScore+'%'; dot.style.top=socialScore+'%';
       let quad=""; let txt="";
       const econSide=economicScore<50?'links':'rechts';
       const socSide=socialScore<50?'progressief':'conservatief';
-      if(econSide==='links'&&socSide==='progressief'){quad='Links‑Progressief';txt='Je wilt een eerlijke economie en vooruitgang.';}
+      if(econSide==='links'&&socSide==='progressief'){quad='Links‑Progressief';txt='Eerlijkere economie en veel ruimte voor verandering en vrijheden.';}
+      if(econSide==='rechts'&&socSide==='progressief'){quad='Rechts‑Progressief';txt='Marktgericht en vooruitstrevend in sociale en vrijheidskwesties.';}
+      if(econSide==='links'&&socSide==='conservatief'){quad='Links‑Conservatief';txt='Egalitaire economie, maar waarde hechten aan traditie en orde.';}
+      if(econSide==='rechts'&&socSide==='conservatief'){quad='Rechts‑Conservatief';txt='Marktgericht met nadruk op behoud en autoriteit.';}
+      document.getElementById('quadText').innerHTML=`<strong>${quad}</strong><p>${txt}</p>`;
+      document.getElementById('explanation').innerHTML=`
+        <p>Economisch (links→rechts): <strong>${economicScore}%</strong></p>
+        <p>Sociaal + Vrijheid (progressief→conservatief): <strong>${socialScore}%</strong></p>
+        <p>Vrijheid (libertair→autoriteit): <strong>${freedomScore}%</strong></p>
+        <p>Internationaal (globalistisch→nationalistisch): <strong>${intlScore}%</strong></p>
+        <p class="mt-2 text-slate-300">De positie in het kompas gebruikt X = Economie (links‑rechts) en Y = Sociaal + Vrijheid (progressief‑conservatief). De extra balken tonen je aparte positie op Vrijheid en Internationaal.</p>
+      `;
+    }
       if(econSide==='rechts'&&socSide==='progressief'){quad='Rechts‑Progressief';txt='Je gelooft in marktwerking en vooruitgang.';}
       if(econSide==='links'&&socSide==='conservatief'){quad='Links‑Conservatief';txt='Je wilt gelijkheid en behoud van regels en tradities.';}
       if(econSide==='rechts'&&socSide==='conservatief'){quad='Rechts‑Conservatief';txt='Je kiest voor marktwerking en behoud van tradities.';}
