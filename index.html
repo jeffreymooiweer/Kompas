@@ -1,0 +1,213 @@
+<!DOCTYPE html><html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Politieke Kompas — Progressief vs Conservatief</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+  <style>
+    body { font-family: Inter, sans-serif; background: #0f172a; color: #f8fafc; min-height: 100vh; }
+    .card { background: rgba(255,255,255,0.08); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.15); border-radius: 1rem; padding: 1.5rem; }
+    .slider { -webkit-appearance: none; width: 100%; height: 10px; border-radius: 999px; background: rgba(255,255,255,0.2); outline: none; }
+    .slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 22px; height: 22px; border-radius: 50%; background: linear-gradient(135deg, #3b82f6, #a855f7); border: 2px solid white; cursor: pointer; }
+    .dot { position:absolute; width:18px; height:18px; border-radius:50%; background:linear-gradient(135deg, #ef4444, #fb7185); border:2px solid white; transform:translate(-50%,-50%); transition: all .6s; }
+    .info-pop { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; background: rgba(2,6,23,0.6); z-index: 50; }
+    .info-card { max-width: 34rem; width: calc(100% - 2rem); background: rgba(15,23,42,0.95); border: 1px solid rgba(255,255,255,0.15); border-radius: 1rem; padding: 1rem; }
+    .badge { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); padding: .2rem .5rem; border-radius: 999px; font-size: .75rem; }
+    .icon-btn { display:inline-flex; align-items:center; gap:.35rem; padding:.35rem .6rem; border-radius:.6rem; background: rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); }
+  </style>
+</head>
+<body class="p-6">
+  <header class="max-w-4xl mx-auto mb-6 flex items-center justify-between">
+    <h1 class="text-2xl font-bold">Politieke Kompas</h1>
+    <button id="resetBtn" class="px-3 py-2 rounded bg-slate-700 hover:bg-slate-600 flex items-center gap-2"><i data-feather="refresh-cw"></i> Opnieuw</button>
+  </header>  <main class="max-w-4xl mx-auto">
+    <!-- Quiz -->
+    <div id="quiz" class="card mb-6">
+      <div class="mb-4 flex justify-between items-center">
+        <span id="qCounter">Vraag 1</span>
+        <div class="w-full h-2 bg-white/10 ml-4 rounded">
+          <div id="progress" class="h-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded" style="width:5%"></div>
+        </div>
+      </div>
+      <div class="flex items-start gap-2 mb-3">
+        <p id="qText" class="text-lg font-semibold flex-1"></p>
+        <button id="infoBtn" class="icon-btn shrink-0" title="Meer uitleg"><i data-feather="info"></i><span class="hidden sm:inline">Info</span></button>
+      </div>
+      <input id="qSlider" type="range" min="1" max="5" value="3" class="slider mb-3">
+      <div class="flex justify-between text-sm text-slate-300">
+        <span>Helemaal oneens</span><span>Neutraal</span><span>Helemaal eens</span>
+      </div>
+      <div class="mt-4 flex justify-between">
+        <button id="prevBtn" class="px-4 py-2 bg-slate-600 rounded disabled:opacity-40">Vorige</button>
+        <button id="nextBtn" class="px-4 py-2 bg-blue-600 rounded">Volgende</button>
+      </div>
+    </div><!-- Resultaten -->
+<div id="results" class="hidden space-y-6">
+  <div class="grid md:grid-cols-2 gap-6">
+    <div class="card">
+      <h2 class="text-xl font-bold mb-3">Jouw scores</h2>
+      <div class="mb-4">
+        <p class="mb-1 flex justify-between"><span>Economisch (Links ↔ Rechts)</span><span id="economicScore">0%</span></p>
+        <div class="w-full h-2 bg-white/10 rounded"><div id="economicBar" class="h-2 bg-red-500 rounded" style="width:50%"></div></div>
+      </div>
+      <div>
+        <p class="mb-1 flex justify-between"><span>Sociaal (Progressief ↔ Conservatief)</span><span id="socialScore">0%</span></p>
+        <div class="w-full h-2 bg-white/10 rounded"><div id="socialBar" class="h-2 bg-green-500 rounded" style="width:50%"></div></div>
+      </div>
+      <div id="quadText" class="mt-4 text-sm"></div>
+    </div>
+    <div class="card">
+      <h2 class="text-xl font-bold mb-3">Kompas</h2>
+      <div id="compass" class="relative aspect-square bg-slate-800">
+        <!-- grid lines -->
+        <div class="absolute top-1/2 left-0 right-0 h-px bg-slate-500"></div>
+        <div class="absolute left-1/2 top-0 bottom-0 w-px bg-slate-500"></div>
+
+        <!-- OUTSIDE AXIS LABELS (no arrows) -->
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-full text-xs">Conservatief</div>
+        <div class="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-full text-xs">Progressief</div>
+        <div class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-full text-xs mr-2">Links</div>
+        <div class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-full text-xs ml-2">Rechts</div>
+
+        <!-- result dot -->
+        <div id="dot" class="dot" style="left:50%;top:50%"></div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <h2 class="text-lg font-bold mb-2">Uitleg</h2>
+    <div id="explanation" class="text-sm"></div>
+  </div>
+</div>
+
+  </main>  <!-- Info Popup -->  <div id="infoModal" class="info-pop">
+    <div class="info-card">
+      <div class="flex items-start justify-between gap-3 mb-2">
+        <h3 id="infoTitle" class="text-lg font-semibold"></h3>
+        <button id="infoClose" class="icon-btn" title="Sluit"><i data-feather="x"></i></button>
+      </div>
+      <p id="infoUitleg" class="text-slate-200 mb-3"></p>
+      <div class="grid sm:grid-cols-2 gap-3 text-sm">
+        <div class="p-3 rounded bg-white/5 border border-white/10">
+          <div class="mb-1"><span class="badge">Pluspunten</span></div>
+          <ul id="infoVoor" class="list-disc ml-5 space-y-1"></ul>
+        </div>
+        <div class="p-3 rounded bg-white/5 border border-white/10">
+          <div class="mb-1"><span class="badge">Minpunten</span></div>
+          <ul id="infoTegen" class="list-disc ml-5 space-y-1"></ul>
+        </div>
+      </div>
+    </div>
+  </div>  <script>
+    feather.replace();
+
+    // 24 vragen met info in simpele taal
+    const questions = [
+      // ECONOMIE (12)
+      { text:"Hoge inkomens mogen meer belasting betalen om verschil te verkleinen.", axis:"economic", polarity:-1, info:{ uitleg:"Gaat over extra belasting voor rijken om ongelijkheid te verminderen.", voor:["Minder ongelijkheid","Meer geld voor zorg en onderwijs"], tegen:["Rijken kunnen verhuizen of minder investeren","Kan banen kosten"] } },
+      { text:"Concurrentie en uitbesteden maken diensten vaak beter.", axis:"economic", polarity:+1, info:{ uitleg:"Bedrijven leveren diensten i.p.v. overheid.", voor:["Efficiënter en goedkoper","Meer keuze"], tegen:["Winst kan belangrijker zijn dan kwaliteit","Kan ongelijkheid vergroten"] } },
+      { text:"Een basisinkomen helpt als vangnet.", axis:"economic", polarity:-1, info:{ uitleg:"Iedereen krijgt elke maand een vast bedrag.", voor:["Zekerheid voor iedereen","Minder armoede"], tegen:["Kost veel geld","Kan werk minder aantrekkelijk maken"] } },
+      { text:"Salarissen moeten vooral door de markt ontstaan.", axis:"economic", polarity:+1, info:{ uitleg:"Minder overheidsregels over loonhoogte.", voor:["Bedrijven concurreren beter","Efficiënt"], tegen:["Kans op te lage lonen","Meer ongelijkheid"] } },
+      { text:"Belangrijke sectoren zoals energie of spoor moeten publiek blijven.", axis:"economic", polarity:-1, info:{ uitleg:"Staat houdt controle over basisvoorzieningen.", voor:["Iedereen toegang","Betrouwbaarder"], tegen:["Kan duur en traag zijn","Minder innovatie"] } },
+      { text:"Lagere lasten voor bedrijven zorgen voor groei.", axis:"economic", polarity:+1, info:{ uitleg:"Minder belasting en regels voor bedrijven.", voor:["Meer banen","Meer investeringen"], tegen:["Minder geld voor publieke diensten","Grote bedrijven profiteren vooral"] } },
+      { text:"Sterke werknemersrechten zijn nodig voor een gezonde economie.", axis:"economic", polarity:-1, info:{ uitleg:"Bescherming via wet en vakbond.", voor:["Beter loon en veiligheid","Meer zekerheid"], tegen:["Minder flexibiliteit voor bedrijven","Kan groei remmen"] } },
+      { text:"Vrije handel is meestal beter dan bescherming van de eigen markt.", axis:"economic", polarity:+1, info:{ uitleg:"Grenzen open voor import/export, weinig beperkingen.", voor:["Goedkopere producten","Meer keuze"], tegen:["Banen kunnen verdwijnen","Afhankelijk van buitenland"] } },
+      { text:"Zorg en onderwijs moeten vooral publiek en betaalbaar blijven.", axis:"economic", polarity:-1, info:{ uitleg:"Overheid betaalt een groot deel van zorg en scholen.", voor:["Iedereen kan meedoen","Meer gelijkheid"], tegen:["Hoge kosten voor overheid","Minder concurrentie en innovatie"] } },
+      { text:"Mensen zijn zelf verantwoordelijk voor hun pensioen.", axis:"economic", polarity:+1, info:{ uitleg:"Zelf sparen, minder via de staat.", voor:["Eigen keuzevrijheid","Minder druk op overheid"], tegen:["Niet iedereen spaart genoeg","Risico op armoede later"] } },
+      { text:"Grote bedrijven mogen zwaarder worden belast dan MKB.", axis:"economic", polarity:-1, info:{ uitleg:"Grotere bedrijven betalen relatief meer.", voor:["Eerlijkere verdeling","Meer inkomsten voor overheid"], tegen:["Bedrijven kunnen vertrekken","Minder investeringen"] } },
+      { text:"Minder regels en lasten voor ondernemers levert meer op.", axis:"economic", polarity:+1, info:{ uitleg:"Minder papierwerk en belasting.", voor:["Meer groei en innovatie","Snellere processen"], tegen:["Risico op misbruik","Minder bescherming voor werknemers/milieu"] } },
+      // SOCIAAL (12)
+      { text:"Softdrugs en kleine hoeveelheden moeten niet strafbaar zijn.", axis:"social", polarity:-1, info:{ uitleg:"Gebruik/bezit kleine hoeveelheden toestaan.", voor:["Minder criminaliteit","Betere controle en veiligheid"], tegen:["Kan meer gebruik uitlokken","Gezondheidsrisico's"] } },
+      { text:"Immigratie mag strenger worden beperkt.", axis:"social", polarity:+1, info:{ uitleg:"Minder mensen mogen naar Nederland komen.", voor:["Minder druk op woningen/voorzieningen","Meer controle"], tegen:["Tekort aan personeel","Minder diversiteit"] } },
+      { text:"Abortus moet legaal en goed toegankelijk zijn.", axis:"social", polarity:-1, info:{ uitleg:"Vrouwen beslissen zelf over afbreken zwangerschap.", voor:["Vrijheid en veiligheid","Beter geregeld"], tegen:["Ethische bezwaren","Morele discussie"] } },
+      { text:"Zwaardere straffen en meer camera's helpen tegen criminaliteit.", axis:"social", polarity:+1, info:{ uitleg:"Strenger optreden en meer toezicht.", voor:["Meer veiligheid","Schrikt af"], tegen:["Privacyproblemen","Pakt oorzaken niet aan"] } },
+      { text:"LHBTQ+-rechten moeten actief beschermd worden.", axis:"social", polarity:-1, info:{ uitleg:"Overheid zorgt voor gelijke rechten en aanpak discriminatie.", voor:["Iedereen voelt zich veilig","Minder discriminatie"], tegen:["Overheid bemoeit zich veel","Kan botsen met tradities"] } },
+      { text:"Tradities en nationale cultuur mogen beter bewaakt worden.", axis:"social", polarity:+1, info:{ uitleg:"Meer aandacht voor behoud van oude gewoontes.", voor:["Samenhang en identiteit","Bescherming erfgoed"], tegen:["Kan vooruitgang remmen","Kan minderheden buitensluiten"] } },
+      { text:"Kerk en staat moeten strikt gescheiden blijven.", axis:"social", polarity:-1, info:{ uitleg:"Geloof en politiek houden afstand.", voor:["Gelijkheid voor iedereen","Politiek blijft neutraal"], tegen:["Gelovigen voelen zich minder gehoord","Minder religieuze tradities in beleid"] } },
+      { text:"Extra surveillance door de overheid is goed tegen terrorisme.", axis:"social", polarity:+1, info:{ uitleg:"Meer toezicht/afluisteren om aanslagen te voorkomen.", voor:["Meer veiligheid","Sneller ingrijpen"], tegen:["Minder privacy","Kans op misbruik"] } },
+      { text:"Vrije meningsuiting moet ruim zijn, ook als het schuurt.", axis:"social", polarity:-1, info:{ uitleg:"Mensen mogen (bijna) alles zeggen.", voor:["Sterke democratie","Eerlijke discussies"], tegen:["Kan kwetsend zijn","Meer spanningen"] } },
+      { text:"Bij onrust gaan veiligheid en orde voor op individuele vrijheid.", axis:"social", polarity:+1, info:{ uitleg:"Overheid mag hard ingrijpen voor rust en veiligheid.", voor:["Sneller stabiliteit","Bescherming burgers"], tegen:["Vrijheden worden ingeperkt","Risico op machtsmisbruik"] } },
+      { text:"Diversiteit maakt de samenleving sterker.", axis:"social", polarity:-1, info:{ uitleg:"Verschillende achtergronden zijn positief.", voor:["Nieuwe ideeën/innovatie","Meer begrip"], tegen:["Kan spanningen geven","Integratie kost moeite"] } },
+      { text:"Integratie en burgerschap mogen strenger worden afgedwongen.", axis:"social", polarity:+1, info:{ uitleg:"Nieuwkomers passen zich duidelijker aan regels/gewoontes aan.", voor:["Meer samenhang","Minder misverstanden"], tegen:["Kan streng/oneerlijk voelen","Minder ruimte voor verschillen"] } }
+    ];
+
+    let current=0; let answers=Array(questions.length).fill(3);
+    const qText=document.getElementById('qText');
+    const qCounter=document.getElementById('qCounter');
+    const qSlider=document.getElementById('qSlider');
+    const progress=document.getElementById('progress');
+    const prevBtn=document.getElementById('prevBtn');
+    const nextBtn=document.getElementById('nextBtn');
+
+    const infoBtn=document.getElementById('infoBtn');
+    const infoModal=document.getElementById('infoModal');
+    const infoClose=document.getElementById('infoClose');
+    const infoTitle=document.getElementById('infoTitle');
+    const infoUitleg=document.getElementById('infoUitleg');
+    const infoVoor=document.getElementById('infoVoor');
+    const infoTegen=document.getElementById('infoTegen');
+
+    function renderInfo(q){
+      infoTitle.textContent = q.text;
+      infoUitleg.textContent = q.info?.uitleg || '';
+      infoVoor.innerHTML = (q.info?.voor||[]).map(v=>`<li>${v}</li>`).join('');
+      infoTegen.innerHTML = (q.info?.tegen||[]).map(v=>`<li>${v}</li>`).join('');
+    }
+
+    function openInfo(){ infoModal.style.display='flex'; }
+    function closeInfo(){ infoModal.style.display='none'; }
+
+    infoBtn.addEventListener('click', ()=>{ renderInfo(questions[current]); openInfo(); });
+    infoClose.addEventListener('click', closeInfo);
+    infoModal.addEventListener('click', (e)=>{ if(e.target===infoModal) closeInfo(); });
+
+    function showQuestion(){
+      const q=questions[current];
+      qText.textContent=q.text;
+      qCounter.textContent=`Vraag ${current+1}/${questions.length}`;
+      qSlider.value=answers[current];
+      progress.style.width=`${((current)/questions.length)*100}%`;
+      prevBtn.disabled=current===0;
+      nextBtn.textContent=current===questions.length-1?"Resultaat":"Volgende";
+    }
+    showQuestion();
+
+    qSlider.addEventListener('input',()=>{answers[current]=parseInt(qSlider.value)});
+    nextBtn.addEventListener('click',()=>{answers[current]=parseInt(qSlider.value); if(current<questions.length-1){current++;showQuestion();}else{calc();}});
+    prevBtn.addEventListener('click',()=>{if(current>0){current--;showQuestion();}});
+    document.getElementById('resetBtn').addEventListener('click',()=>{current=0;answers=Array(questions.length).fill(3);document.getElementById('results').classList.add('hidden');document.getElementById('quiz').classList.remove('hidden');showQuestion();});
+
+    function calc(){
+      let econ=0,soc=0;
+      questions.forEach((q,i)=>{const val=answers[i]-3;const sc=val*q.polarity;if(q.axis==='economic')econ+=sc;else soc+=sc;});
+      const econMax=questions.filter(q=>q.axis==='economic').length*2;
+      const socMax=questions.filter(q=>q.axis==='social').length*2;
+      const econScore=Math.round(((econ+econMax)/(2*econMax))*100);
+      const socScore=Math.round(((soc+socMax)/(2*socMax))*100);
+      showResults(econScore,socScore);
+    }
+
+    function showResults(economicScore,socialScore){
+      document.getElementById('quiz').classList.add('hidden');
+      document.getElementById('results').classList.remove('hidden');
+      document.getElementById('economicScore').textContent=economicScore+"%";
+      document.getElementById('socialScore').textContent=socialScore+"%";
+      document.getElementById('economicBar').style.width=economicScore+"%";
+      document.getElementById('socialBar').style.width=socialScore+"%";
+      const dot=document.getElementById('dot'); dot.style.left=economicScore+'%'; dot.style.top=socialScore+'%';
+      let quad=""; let txt="";
+      const econSide=economicScore<50?'links':'rechts';
+      const socSide=socialScore<50?'progressief':'conservatief';
+      if(econSide==='links'&&socSide==='progressief'){quad='Links‑Progressief';txt='Je wilt een eerlijke economie en vooruitgang.';}
+      if(econSide==='rechts'&&socSide==='progressief'){quad='Rechts‑Progressief';txt='Je gelooft in marktwerking en vooruitgang.';}
+      if(econSide==='links'&&socSide==='conservatief'){quad='Links‑Conservatief';txt='Je wilt gelijkheid en behoud van regels en tradities.';}
+      if(econSide==='rechts'&&socSide==='conservatief'){quad='Rechts‑Conservatief';txt='Je kiest voor marktwerking en behoud van tradities.';}
+      document.getElementById('quadText').innerHTML=`<strong>${quad}</strong><p>${txt}</p>`;
+      document.getElementById('explanation').innerHTML=`<p>Economisch: ${economicScore}% (0% = links, 100% = rechts)</p><p>Sociaal: ${socialScore}% (0% = progressief, 100% = conservatief)</p>`;
+    }
+  </script></body>
+</html>
